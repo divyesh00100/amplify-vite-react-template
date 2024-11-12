@@ -6,86 +6,33 @@ const client = generateClient<Schema>();
 
 function App() {
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
-  const [filter, setFilter] = useState("all");
 
-  // Fetch todos from the backend and set the state
   useEffect(() => {
-    const subscription = client.models.Todo.observeQuery().subscribe({
-      next: ({ items }) => setTodos(items),
-      error: (err) => console.error("Error fetching todos:", err),
+    client.models.Todo.observeQuery().subscribe({
+      next: (data) => setTodos([...data.items]),
     });
-    return () => subscription.unsubscribe();
   }, []);
 
-  // Create a new todo
   function createTodo() {
-    const content = window.prompt("Enter a new task:");
-    if (content) {
-      client.models.Todo.create({ content, completed: false }).then((newTodo) => {
-        setTodos((prevTodos) => [...prevTodos, newTodo]);
-      });
-    }
+    client.models.Todo.create({ content: window.prompt("Todo content") });
   }
-
-  // Toggle the completion status of a todo
-  function toggleComplete(id: string) {
-    const todoToUpdate = todos.find((todo) => todo.id === id);
-    if (todoToUpdate) {
-      client.models.Todo.update(id, { completed: !todoToUpdate.completed }).then(() => {
-        setTodos((prevTodos) =>
-          prevTodos.map((todo) =>
-            todo.id === id ? { ...todo, completed: !todo.completed } : todo
-          )
-        );
-      });
-    }
-  }
-
-  // Delete a todo
-  function deleteTodo(id: string) {
-    client.models.Todo.delete(id).then(() => {
-      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
-    });
-  }
-
-  // Filter todos based on the selected filter option
-  const filteredTodos = todos.filter((todo) => {
-    if (filter === "completed") return todo.completed;
-    if (filter === "active") return !todo.completed;
-    return true;
-  });
 
   return (
     <main>
-      <h1>My Task List</h1>
-      <div className="controls">
-        <button onClick={createTodo}>+ Add Task</button>
-        <select onChange={(e) => setFilter(e.target.value)} value={filter}>
-          <option value="all">All</option>
-          <option value="active">Active</option>
-          <option value="completed">Completed</option>
-        </select>
-      </div>
+      <h1>My todos</h1>
+      <button onClick={createTodo}>+ new</button>
       <ul>
-        {filteredTodos.map((todo) => (
-          <li key={todo.id} className={todo.completed ? "completed" : ""}>
-            <input
-              type="checkbox"
-              checked={todo.completed}
-              onChange={() => toggleComplete(todo.id)}
-            />
-            <span>{todo.content}</span>
-            <button onClick={() => deleteTodo(todo.id)}>❌</button>
-          </li>
+        {todos.map((todo) => (
+          <li key={todo.id}>{todo.content}</li>
         ))}
       </ul>
-      <footer>
-        🎉 Your task list is ready! Add, complete, or delete your tasks to stay organized.
+      <div>
+        🥳 App successfully hosted. Try creating a new todo.
         <br />
         <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
-          Continue exploring this tutorial.
+          Review next step of this tutorial.
         </a>
-      </footer>
+      </div>
     </main>
   );
 }
