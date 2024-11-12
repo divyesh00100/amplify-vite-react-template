@@ -1,65 +1,106 @@
 body {
   margin: 0;
-  background: linear-gradient(180deg, rgb(117, 81, 194), rgb(255, 255, 255));
+  background: linear-gradient(135deg, #84fab0, #8fd3f4);
   display: flex;
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Roboto", sans-serif;
   height: 100vh;
   width: 100vw;
   justify-content: center;
   align-items: center;
+  color: #333;
 }
 
 main {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  background-color: white;
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+  color: #333;
+  font-size: 1.8em;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
 }
 
 button {
   border-radius: 8px;
-  border: 1px solid transparent;
+  border: none;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #4caf50;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: background-color 0.3s;
   color: white;
 }
 button:hover {
-  border-color: #646cff;
+  background-color: #388e3c;
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+
+select {
+  padding: 0.4em 0.6em;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+  font-size: 1em;
+  cursor: pointer;
 }
 
 ul {
-  padding-inline-start: 0;
-  margin-block-start: 0;
-  margin-block-end: 0;
-  list-style-type: none;
-  display: flex;
-  flex-direction: column;
-  margin: 8px 0;
-  border: 1px solid black;
-  gap: 1px;
-  background-color: black;
-  border-radius: 8px;
-  overflow: auto;
+  padding: 0;
+  margin: 0;
+  list-style: none;
 }
 
 li {
-  background-color: white;
-  padding: 8px;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-li:hover {
-  background: #dadbf9;
+li:last-child {
+  border-bottom: none;
 }
 
-a {
-  font-weight: 800;
-  text-decoration: none;
+li.completed span {
+  text-decoration: line-through;
+  color: #757575;
+}
+
+input[type="checkbox"] {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+button {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #e57373;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+button:hover {
+  color: #d32f2f;
+}
+
+footer {
+  margin-top: 20px;
+  font-size: 0.9em;
+  color: #555;
 }
