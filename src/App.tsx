@@ -8,33 +8,48 @@ function App() {
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
   const [filter, setFilter] = useState("all");
 
+  // Fetch todos from the backend and set the state
   useEffect(() => {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
+    const subscription = client.models.Todo.observeQuery().subscribe({
+      next: ({ items }) => setTodos(items),
+      error: (err) => console.error("Error fetching todos:", err),
     });
+    return () => subscription.unsubscribe();
   }, []);
 
+  // Create a new todo
   function createTodo() {
-    const content = window.prompt("Enter a new task");
+    const content = window.prompt("Enter a new task:");
     if (content) {
-      client.models.Todo.create({ content, completed: false });
+      client.models.Todo.create({ content, completed: false }).then((newTodo) => {
+        setTodos((prevTodos) => [...prevTodos, newTodo]);
+      });
     }
   }
 
+  // Toggle the completion status of a todo
   function toggleComplete(id: string) {
-    const updatedTodos = todos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    );
-    setTodos(updatedTodos);
-    client.models.Todo.update(id, { completed: !todos.find(todo => todo.id === id)?.completed });
+    const todoToUpdate = todos.find((todo) => todo.id === id);
+    if (todoToUpdate) {
+      client.models.Todo.update(id, { completed: !todoToUpdate.completed }).then(() => {
+        setTodos((prevTodos) =>
+          prevTodos.map((todo) =>
+            todo.id === id ? { ...todo, completed: !todo.completed } : todo
+          )
+        );
+      });
+    }
   }
 
+  // Delete a todo
   function deleteTodo(id: string) {
-    setTodos(todos.filter(todo => todo.id !== id));
-    client.models.Todo.delete(id);
+    client.models.Todo.delete(id).then(() => {
+      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+    });
   }
 
-  const filteredTodos = todos.filter(todo => {
+  // Filter todos based on the selected filter option
+  const filteredTodos = todos.filter((todo) => {
     if (filter === "completed") return todo.completed;
     if (filter === "active") return !todo.completed;
     return true;
